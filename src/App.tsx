@@ -10,6 +10,7 @@ import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import Employees from "./pages/Employees";
 import Departments from "./pages/Departments";
+import DepartmentDetailsPage from "./pages/DepartmentDetailsPage";
 import Attendance from "./pages/Attendance";
 import Payroll from "./pages/Payroll";
 import Performance from "./pages/Performance";
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/employees/add" element={<Layout><AddEmployeePage /></Layout>} />
             <Route path="/employees/view/:id" element={<Layout><ViewEmployee /></Layout>} />
             <Route path="/departments" element={<Layout><Departments /></Layout>} />
+            <Route path="/departments/:id" element={<Layout><DepartmentDetailsPage /></Layout>} />
             <Route path="/designations" element={<Layout><PlaceholderPage title="Designations" description="Manage job titles and positions" /></Layout>} />
             <Route path="/attendance" element={<Layout><Attendance /></Layout>} />
             <Route path="/attendance/*" element={<Layout><PlaceholderPage title="Attendance Management" description="Advanced attendance features" /></Layout>} />

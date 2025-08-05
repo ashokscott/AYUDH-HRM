@@ -13,9 +13,15 @@ import { Search, Plus, Filter, Grid, List } from 'lucide-react';
 interface Employee {
   id: string;
   employee_id: string;
- /
+  name: string;
+  mobile_number: string;
+  designation: string;
+  department: string;
+  image?: string | null;
+  reporting_manager_id?: string | null;
+  reporting_manager_name?: string;
+  reporting_manager_image?: string | null;
 }
-
 export default function Employees() {
   const [searchTerm, setSearchTerm] = useState('');
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -31,7 +37,16 @@ export default function Employees() {
           .from('employee_master')
           .select('id, employee_id, name, image');
         
-        if (allError) throw allError;
+        if (allError) {
+          console.error('Supabase allEmployees error:', allError);
+          throw allError;
+        }
+        if (!allEmployees) {
+          console.error('Supabase allEmployees is null or undefined:', allEmployees);
+          setEmployees([]);
+          setLoading(false);
+          return;
+        }
 
         const managerMap = new Map(
           allEmployees.map(emp => [emp.id, emp])
@@ -43,21 +58,34 @@ export default function Employees() {
           .select(`
             *,
             designations(name),
-            departments(name)
+            departments:departments!employee_master_department_id_fkey(name)
           `);
-        
-        if (error) throw error;
+
+        if (error) {
+          console.error('Supabase emps error:', error);
+          throw error;
+        }
+        if (!emps) {
+          console.error('Supabase emps is null or undefined:', emps);
+          setEmployees([]);
+          setLoading(false);
+          return;
+        }
 
         const enriched = emps.map(emp => {
           const manager = emp.reporting_manager_id ? managerMap.get(emp.reporting_manager_id) : null;
-          
+          let departmentName = '';
+          const deptObj = emp.departments;
+          if (deptObj && typeof deptObj === 'object' && 'name' in (deptObj as any)) {
+            departmentName = (deptObj as any).name ?? '';
+          }
           return {
             id: emp.id,
             employee_id: emp.employee_id,
             name: emp.name,
             mobile_number: emp.mobile_number,
             designation: emp.designations?.name || '',
-            department: emp.departments?.name || '',
+            department: departmentName,
             image: emp.image,
             reporting_manager_id: emp.reporting_manager_id,
             reporting_manager_name: manager?.name || 'Not assigned',
@@ -68,6 +96,14 @@ export default function Employees() {
         setEmployees(enriched);
       } catch (error) {
         console.error('Error fetching employees:', error);
+        if (typeof error === 'object') {
+          // Print error details if available
+          for (const key in error) {
+            if (Object.prototype.hasOwnProperty.call(error, key)) {
+              console.error('Error property:', key, error[key]);
+            }
+          }
+        }
       } finally {
         setLoading(false);
       }

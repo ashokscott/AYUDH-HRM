@@ -16,19 +16,22 @@ export default function ViewEmployee() {
   useEffect(() => {
     async function fetchEmployee() {
       try {
+        console.log('Fetching employee with id:', id);
         const { data, error } = await supabase
           .from('employee_master')
           .select(`
             *,
             designations(name),
-            departments(name),
+            departments:departments!employee_master_department_id_fkey(name),
             employee_type(name, image_url),
             reporting_manager:reporting_manager_id(id, name, image, employee_id)
           `)
           .eq('id', id)
           .single();
-        
-        if (error) throw error;
+        if (error) {
+          console.error('Supabase employee fetch error:', error);
+          throw error;
+        }
         setEmployee(data);
       } catch (error) {
         console.error('Error fetching employee:', error);

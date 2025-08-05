@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -58,6 +59,7 @@ function DepartmentCard({ dept, onView, onEdit }: any) {
 }
 
 export default function DepartmentsPage() {
+  const navigate = useNavigate();
   const [departments, setDepartments] = useState<any[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<any>({});
@@ -220,7 +222,7 @@ export default function DepartmentsPage() {
           <DepartmentCard 
             key={dept.id} 
             dept={dept} 
-            onView={d => setSelectedDept(d)} 
+            onView={d => navigate(`/departments/${d.id}`)}
             onEdit={d => setManageDept(d)} 
           />
         ))}
