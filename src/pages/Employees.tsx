@@ -13,14 +13,7 @@ import { Search, Plus, Filter, Grid, List } from 'lucide-react';
 interface Employee {
   id: string;
   employee_id: string;
-  name: string;
-  mobile_number: string;
-  designation: string;
-  department: string;
-  image?: string;
-  reporting_manager_id?: string;
-  reporting_manager_name?: string;
-  reporting_manager_image?: string;
+ /
 }
 
 export default function Employees() {
